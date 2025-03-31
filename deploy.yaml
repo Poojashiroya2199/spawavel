@@ -56,3 +56,12 @@ jobs:
           elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "Awaiting approval for Production deployment..."
           fi
+
+  approval:
+    needs: deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/qa' && 'qa' || 'development' }}
+    steps:
+      - name: Approval
+        run: echo "Approval required before deploying to ${GITHUB_REF}"
