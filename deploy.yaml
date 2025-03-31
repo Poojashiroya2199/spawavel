@@ -1,4 +1,4 @@
-name: Next.js CI/CD
+name: Next.js CI/CD Pipeline
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -29,9 +29,8 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment:
+    environment: 
       name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/qa' && 'qa' || 'development' }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -51,12 +50,9 @@ jobs:
       - name: Deploy
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            echo "Deploying to Dev..."
-            # Add Dev Deployment Command Here
+            echo "Awaiting approval for DEV deployment..."
           elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
-            echo "Deploying to QA..."
-            # Add QA Deployment Command Here
+            echo "Awaiting approval for QA deployment..."
           elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "Deploying to Production..."
-            # Add Production Deployment Command Here
+            echo "Awaiting approval for Production deployment..."
           fi
