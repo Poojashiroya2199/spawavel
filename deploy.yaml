@@ -1,0 +1,62 @@
+name: Next.js CI/CD
+
+on:
+  push:
+    branches:
+      - develop
+      - qa
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/qa' && 'qa' || 'development' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "Deploying to Dev..."
+            # Add Dev Deployment Command Here
+          elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
+            echo "Deploying to QA..."
+            # Add QA Deployment Command Here
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "Deploying to Production..."
+            # Add Production Deployment Command Here
+          fi
